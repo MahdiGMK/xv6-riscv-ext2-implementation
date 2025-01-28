@@ -21,6 +21,8 @@
 #include "buf.h"
 #include "file.h"
 
+// TODO using bread find root inode and iterate recursively on root inode and read data untill reaching null pointer(STEP 3)
+
 #define min(a, b) ((a) < (b) ? (a) : (b))
 // there should be one superblock per disk device, but we run with
 // only one device
