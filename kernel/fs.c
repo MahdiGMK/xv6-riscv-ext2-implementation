@@ -26,7 +26,8 @@
 #define min(a, b) ((a) < (b) ? (a) : (b))
 // there should be one superblock per disk device, but we run with
 // only one device
-struct superblock sb; 
+struct superblock sb;
+//struct groupdescriptor gd; TODO: uncomment and add groupdescriptor struct
 
 // Read the super block.
 static void
@@ -39,10 +40,24 @@ readsb(int dev, struct superblock *sb)
   brelse(bp);
 }
 
+static void readgd() {
+    // TODO: block 2!
+    // TODO: fill gd data
+    // TODO: crate struct
+    // TODO: check whether it's alright to use simple memmove or not
+}
+
+// TODO: reaching inodes via some sort of function (block index = (inode - 1) / inodes_per_group)
+// TODO: inode index = (inode - 1) % inodes_per_group
+// TODO: updata inodes struct
+
+// TODO
+
 // Init fs
 void
 fsinit(int dev) {
   readsb(dev, &sb);
+  // TODO: readgd()
   if(sb.magic != FSMAGIC)
     panic("invalid file system");
   initlog(dev, &sb);
