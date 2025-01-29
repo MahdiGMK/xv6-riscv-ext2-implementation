@@ -40,12 +40,12 @@ readsb(int dev, struct superblock *sb)
   brelse(bp);
 }
 
-static void readgd() {
-    // TODO: block 2!
-    // TODO: fill gd data
-    // TODO: crate struct
-    // TODO: check whether it's alright to use simple memmove or not
-}
+// static void readgd() {
+//     // TODO: block 2!
+//     // TODO: fill gd data
+//     // TODO: crate struct
+//     // TODO: check whether it's alright to use simple memmove or not
+// }
 
 // TODO: reaching inodes via some sort of function (block index = (inode - 1) / inodes_per_group)
 // TODO: inode index = (inode - 1) % inodes_per_group
@@ -60,6 +60,7 @@ fsinit(int dev) {
   // TODO: readgd()
   if(sb.magic != FSMAGIC)
     panic("invalid file system");
+  // printf("hello world");
   initlog(dev, &sb);
 }
 

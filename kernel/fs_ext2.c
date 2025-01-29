@@ -20,16 +20,17 @@
 #include "fsext2.h"
 #include "buf.h"
 #include "file.h"
+#include "defs.h"
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 // there should be one superblock per disk device, but we run with
 // only one device
-struct superblock sb;
-//struct groupdescriptor gd; TODO: uncomment and add groupdescriptor struct
+struct ext2_super_block sb;
+struct ext2_group_desc gd; //TODO: uncomment and add groupdescriptor struct
 
 // Read the super block.
 static void
-readsb(int dev, struct superblock *sb)
+readsb(int dev, struct ext2_super_block *sb)
 {
   struct buf *bp;
 
@@ -38,10 +39,13 @@ readsb(int dev, struct superblock *sb)
   brelse(bp);
 }
 
-static void readgd() {
-    // TODO: block 2!
-    // TODO: fill gd data
-    // TODO: crate struct
+static void readgd(int dev, struct ext2_group_desc *gd) {
+
+  struct buf *bp;
+
+  bp = bread(dev, 2);
+  memmove(gd, bp->data, sizeof(*gd));
+  brelse(bp);
     // TODO: check whether it's alright to use simple memmove or not
 }
 
@@ -54,11 +58,13 @@ static void readgd() {
 // Init fs
 void
 fsinit(int dev) {
+  panic("wtf");
   readsb(dev, &sb);
-  // TODO: readgd()
-  if(sb.magic != FSMAGIC)
+  readgd(dev, &gd);
+  if(sb.s_magic != FSMAGIC)
     panic("invalid file system");
-  initlog(dev, &sb);
+  // initlog(dev, &sb);
+  printf("salam");
 }
 
 // Zero a block.
@@ -84,9 +90,9 @@ balloc(uint dev)
   struct buf *bp;
 
   bp = 0;
-  for(b = 0; b < sb.size; b += BPB){
+  for(b = 0; b < FILE_IMAGE_BLOCK_COUNT; b += BPB){
     bp = bread(dev, BBLOCK(b, sb));
-    for(bi = 0; bi < BPB && b + bi < sb.size; bi++){
+    for(bi = 0; bi < BPB && b + bi < FILE_IMAGE_BLOCK_COUNT; bi++){
       m = 1 << (bi % 8);
       if((bp->data[bi/8] & m) == 0){  // Is block free?
         bp->data[bi/8] |= m;  // Mark block in use.
@@ -217,7 +223,7 @@ ialloc(uint dev, short type)
   struct buf *bp;
   struct dinode *dip;
 
-  for(inum = 1; inum < sb.ninodes; inum++){
+  for(inum = 1; inum < sb.s_inodes_count; inum++){
     bp = bread(dev, IBLOCK(inum, sb));
     dip = (struct dinode*)bp->data + inum%IPB;
     if(dip->type == 0){  // a free inode

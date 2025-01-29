@@ -19,7 +19,7 @@ OBJS = \
   $K/syscall.o \
   $K/sysproc.o \
   $K/bio.o \
-  $K/fs.o \
+  $K/fs_ext2.o \
   $K/log.o \
   $K/sleeplock.o \
   $K/file.o \
@@ -113,8 +113,8 @@ $U/_forktest: $U/forktest.o $(ULIB)
 	$(LD) $(LDFLAGS) -N -e main -Ttext 0 -o $U/_forktest $U/forktest.o $U/ulib.o $U/usys.o
 	$(OBJDUMP) -S $U/_forktest > $U/forktest.asm
 
-mkfs/mkfs: mkfs/mkfs.c $K/fs.h $K/param.h
-	gcc -Werror -Wall -I. -o mkfs/mkfs mkfs/mkfs.c
+# mkfs/mkfs: mkfs/mkfs.c $K/fs.h $K/param.h
+# 	gcc -Werror -Wall -I. -o mkfs/mkfs mkfs/mkfs.c
 
 # Prevent deletion of intermediate files, e.g. cat.o, after first build, so
 # that disk image changes after first build are persistent until clean.  More
@@ -140,8 +140,12 @@ UPROGS=\
 	$U/_wc\
 	$U/_zombie\
 
-fs.img: mkfs/mkfs README $(UPROGS)
-	mkfs/mkfs fs.img README $(UPROGS)
+# fs.img: mkfs/mkfs README $(UPROGS)
+# 	mkfs/mkfs fs.img README $(UPROGS)
+fs.img:
+	truncate -s 2M fs.img
+	mkfs.ext2 -b 1024 -I 128 -N 128 fs.img
+	
 
 -include kernel/*.d user/*.d
 

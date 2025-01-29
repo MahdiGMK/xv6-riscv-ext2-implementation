@@ -1,9 +1,12 @@
 // On-disk file system format.
 // Both the kernel and user programs use this header file.
-
+#include <linux/types.h>
+#include "kernel/types.h"
 
 #define ROOTINO  1   // root i-number
 #define BSIZE 1024  // block size
+#define INODES_START_BLOCK 5
+#define FILE_IMAGE_BLOCK_COUNT 1024
 
 // Disk layout:
 // [ boot block | super block | log | inode blocks |
@@ -14,7 +17,6 @@
 struct ext2_super_block {
     __le32  s_inodes_count;    /* Inodes count */
     __le32  s_blocks_count;    /* Blocks count */
-    __le32  s_r_blocks_count;  /* Reserved blocks count */
     __le32  s_r_blocks_count;  /* Reserved blocks count */
     __le32  s_free_blocks_count;  /* Free blocks count */
     __le32  s_free_inodes_count;  /* Free inodes count */
@@ -119,13 +121,13 @@ struct dinode {
 #define IPB           (BSIZE / sizeof(struct dinode))
 
 // Block containing inode i
-#define IBLOCK(i, sb)     ((i) / IPB + sb.inodestart)
+#define IBLOCK(i, sb)     ((i) / IPB + INODES_START_BLOCK)
 
 // Bitmap bits per block
 #define BPB           (BSIZE*8)
 
 // Block of free map containing bit for block b
-#define BBLOCK(b, sb) ((b)/BPB + sb.bmapstart)
+#define BBLOCK(b, sb) ((b)/BPB + INODES_START_BLOCK)
 
 // Directory is a file containing a sequence of dirent structures.
 #define DIRSIZ 14
