@@ -53,6 +53,21 @@ static void readgd(int dev, struct ext2_group_desc *gd) {
 
 // TODO
 
+// #define EXT2_INODE_TABLE_BLOCK(idx)
+#define EXT2_INODE_SIZE      128
+#define EXT2_INODE_PER_BLOCK (BSIZE / EXT2_INODE_SIZE)
+#define EXT2_ROOT_IID        2
+void read_ext2_inode(uint dev, uint iid, struct ext2_inode *nd) {
+    if (iid == 0)
+        panic("trying to read null block");
+    iid--;
+    uint        tblk  = (iid / EXT2_INODE_PER_BLOCK) + gd.bg_inode_table;
+    uint        piblk = (iid % EXT2_INODE_PER_BLOCK) * EXT2_INODE_SIZE;
+    struct buf *bp;
+    bp = bread(dev, tblk);
+    memmove(nd, bp->data + piblk, sizeof(struct ext2_inode));
+    brelse(bp);
+}
 // Init fs
 void fsinit(int dev) {
     readsb(dev, &sb);
@@ -72,6 +87,10 @@ void fsinit(int dev) {
 
     if (sb.s_magic != EXT2MAGIC)
         panic("invalid file system");
+
+    struct ext2_inode rootnode;
+    read_ext2_inode(dev, 2, &rootnode);
+    printf("root mode : %x\n", rootnode.i_mode);
 }
 
 // Zero a block.
