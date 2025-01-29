@@ -21,13 +21,26 @@
 #include "buf.h"
 #include "file.h"
 #include "defs.h"
-#include <complex.h>
+// #include <complex.h>
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 // there should be one superblock per disk device, but we run with
 // only one device
 struct ext2_super_block sb;
 struct ext2_group_desc  gd;
+
+int strcmp(char *a, char *b, int b_len) {
+    if (a[b_len])
+        return 1;
+    for (int i = 0; i < b_len; i++)
+        if (a[i] != b[i])
+            return 1;
+    return 0;
+}
+
+struct {
+    struct inode inode[128];
+} itable;
 
 // Read the super block.
 static void readsb(int dev, struct ext2_super_block *sb) {
@@ -127,6 +140,18 @@ void list_ext2_dir_files(uint dev, struct ext2_inode *nd) {
     // };
 }
 // Init fs
+void map_ext2_inode_with_xv6_inode(struct ext2_inode *nd, uint iid,
+                                   struct inode *ip) {
+    memmove(ip->addrs, nd->i_block, 12 * sizeof(int));
+    ip->dev   = ROOTDEV;
+    ip->inum  = iid;
+    ip->size  = nd->i_size;
+    ip->valid = 1;
+    if (nd->i_mode & 0x4000)
+        ip->type = T_DIR;
+    else
+        ip->type = T_FILE;
+}
 void fsinit(int dev) {
     readsb(dev, &sb);
     readgd(dev, &gd);
@@ -150,6 +175,8 @@ void fsinit(int dev) {
     read_ext2_inode(dev, 2, &rootnode);
     printf("root mode : %x\n", rootnode.i_mode);
     list_ext2_dir_files(dev, &rootnode);
+
+    map_ext2_inode_with_xv6_inode(&rootnode, 2, &itable.inode[0]);
 }
 
 // Zero a block.
@@ -273,15 +300,10 @@ static void bfree(int dev, uint b) {
 // dev, and inum.  One must hold ip->lock in order to
 // read or write that inode's ip->valid, ip->size, ip->type, &c.
 
-struct {
-    struct spinlock lock;
-    struct inode    inode[NINODE];
-} itable;
-
 void iinit() {
-    int i = 0;
+    int           i = 0;
+    struct inode *ip;
 
-    initlock(&itable.lock, "itable");
     for (i = 0; i < NINODE; i++) {
         initsleeplock(&itable.inode[i].lock, "inode");
     }
@@ -338,16 +360,14 @@ void iupdate(struct inode *ip) {
 // and return the in-memory copy. Does not lock
 // the inode and does not read it from disk.
 static struct inode *iget(uint dev, uint inum) {
+    printf("iget %d %d\n", dev, inum);
     struct inode *ip, *empty;
-
-    acquire(&itable.lock);
 
     // Is the inode already in the table?
     empty = 0;
     for (ip = &itable.inode[0]; ip < &itable.inode[NINODE]; ip++) {
         if (ip->ref > 0 && ip->dev == dev && ip->inum == inum) {
             ip->ref++;
-            release(&itable.lock);
             return ip;
         }
         if (empty == 0 && ip->ref == 0) // Remember empty slot.
@@ -363,7 +383,6 @@ static struct inode *iget(uint dev, uint inum) {
     ip->inum  = inum;
     ip->ref   = 1;
     ip->valid = 0;
-    release(&itable.lock);
 
     return ip;
 }
@@ -371,45 +390,43 @@ static struct inode *iget(uint dev, uint inum) {
 // Increment reference count for ip.
 // Returns ip to enable ip = idup(ip1) idiom.
 struct inode *idup(struct inode *ip) {
-    acquire(&itable.lock);
     ip->ref++;
-    release(&itable.lock);
     return ip;
 }
 
 // Lock the given inode.
 // Reads the inode from disk if necessary.
 void ilock(struct inode *ip) {
-    struct buf    *bp;
-    struct dinode *dip;
+    // struct buf    *bp;
+    // struct dinode *dip;
 
-    if (ip == 0 || ip->ref < 1)
-        panic("ilock");
+    // if (ip == 0 || ip->ref < 1)
+    //     panic("ilock");
 
-    acquiresleep(&ip->lock);
+    // acquiresleep(&ip->lock);
 
-    if (ip->valid == 0) {
-        bp        = bread(ip->dev, IBLOCK(ip->inum, sb));
-        dip       = (struct dinode *)bp->data + ip->inum % IPB;
-        ip->type  = dip->type;
-        ip->major = dip->major;
-        ip->minor = dip->minor;
-        ip->nlink = dip->nlink;
-        ip->size  = dip->size;
-        memmove(ip->addrs, dip->addrs, sizeof(ip->addrs));
-        brelse(bp);
-        ip->valid = 1;
-        if (ip->type == 0)
-            panic("ilock: no type");
-    }
+    // if (ip->valid == 0) {
+    //     bp        = bread(ip->dev, IBLOCK(ip->inum, sb));
+    //     dip       = (struct dinode *)bp->data + ip->inum % IPB;
+    //     ip->type  = dip->type;
+    //     ip->major = dip->major;
+    //     ip->minor = dip->minor;
+    //     ip->nlink = dip->nlink;
+    //     ip->size  = dip->size;
+    //     memmove(ip->addrs, dip->addrs, sizeof(ip->addrs));
+    //     brelse(bp);
+    //     ip->valid = 1;
+    //     if (ip->type == 0)
+    //         panic("ilock: no type");
+    // }
 }
 
 // Unlock the given inode.
 void iunlock(struct inode *ip) {
-    if (ip == 0 || !holdingsleep(&ip->lock) || ip->ref < 1)
-        panic("iunlock");
+    // if (ip == 0 || !holdingsleep(&ip->lock) || ip->ref < 1)
+    //     panic("iunlock");
 
-    releasesleep(&ip->lock);
+    // releasesleep(&ip->lock);
 }
 
 // Drop a reference to an in-memory inode.
@@ -420,29 +437,23 @@ void iunlock(struct inode *ip) {
 // All calls to iput() must be inside a transaction in
 // case it has to free the inode.
 void iput(struct inode *ip) {
-    acquire(&itable.lock);
 
-    if (ip->ref == 1 && ip->valid && ip->nlink == 0) {
-        // inode has no links and no other references: truncate and free.
+    // if (ip->ref == 1 && ip->valid && ip->nlink == 0) {
+    //     // inode has no links and no other references: truncate and free.
 
-        // ip->ref == 1 means no other process can have ip locked,
-        // so this acquiresleep() won't block (or deadlock).
-        acquiresleep(&ip->lock);
+    //     // ip->ref == 1 means no other process can have ip locked,
+    //     // so this acquiresleep() won't block (or deadlock).
+    //     acquiresleep(&ip->lock);
 
-        release(&itable.lock);
+    //     itrunc(ip);
+    //     ip->type = 0;
+    //     iupdate(ip);
+    //     ip->valid = 0;
 
-        itrunc(ip);
-        ip->type = 0;
-        iupdate(ip);
-        ip->valid = 0;
+    //     releasesleep(&ip->lock);
+    // }
 
-        releasesleep(&ip->lock);
-
-        acquire(&itable.lock);
-    }
-
-    ip->ref--;
-    release(&itable.lock);
+    // ip->ref--;
 }
 
 // Common idiom: unlock, then put.
@@ -503,6 +514,7 @@ static uint bmap(struct inode *ip, uint bn) {
 // Truncate inode (discard contents).
 // Caller must hold ip->lock.
 void itrunc(struct inode *ip) {
+    printf("itrunc on %d\n", ip->inum);
     int         i, j;
     struct buf *bp;
     uint       *a;
@@ -616,27 +628,59 @@ int namecmp(const char *s, const char *t) { return strncmp(s, t, DIRSIZ); }
 
 // Look for a directory entry in a directory.
 // If found, set *poff to byte offset of entry.
-struct inode *dirlookup(struct inode *dp, char *name, uint *poff) {
+struct inode *dirlookup(struct inode *dp, char *name, uint *poff) { // TODO
     uint          off, inum;
     struct dirent de;
+
+    printf("dirlookup find %s \n", name);
 
     if (dp->type != T_DIR)
         panic("dirlookup not DIR");
 
-    for (off = 0; off < dp->size; off += sizeof(de)) {
-        if (readi(dp, 0, (uint64)&de, off, sizeof(de)) != sizeof(de))
-            panic("dirlookup read");
-        if (de.inum == 0)
-            continue;
-        if (namecmp(name, de.name) == 0) {
-            // entry matches path element
-            if (poff)
-                *poff = off;
-            inum = de.inum;
-            return iget(dp->dev, inum);
-        }
-    }
+    struct buf *bp;
+    char       *ptr        = 0;
+    void       *dentry_ptr = 0;
 
+    __le32 tmp_inode;    /* Inode number */
+    __le16 tmp_rec_len;  /* Directory entry length */
+    __u8   tmp_name_len; /* Name length */
+    __u8   tmp_file_type;
+    char  *tmp_name; /* File name, up to EXT2_NAME_LEN */
+
+    printf("dir size : %d\n", dp->size);
+    bp         = bread(ROOTDEV, dp->addrs[0]);
+    dentry_ptr = bp->data;
+    for (int i = 0; i < 64; i++) { // list upto 64 sub-entry
+        ptr = dentry_ptr;
+
+        memmove(&tmp_inode, ptr, sizeof(tmp_inode));
+        ptr += sizeof(tmp_inode);
+        if (!tmp_inode)
+            break;
+
+        memmove(&tmp_rec_len, ptr, sizeof(tmp_rec_len));
+        ptr += sizeof(tmp_rec_len);
+        memmove(&tmp_name_len, ptr, sizeof(tmp_name_len));
+        ptr += sizeof(tmp_name_len);
+        memmove(&tmp_file_type, ptr, sizeof(tmp_file_type));
+        ptr += sizeof(tmp_file_type);
+        tmp_name = ptr;
+        if (strcmp(name, tmp_name, tmp_name_len) == 0) {
+            uint          inode = tmp_inode;
+            struct inode *rs    = iget(ROOTDEV, inode);
+            if (!rs->valid) {
+                struct ext2_inode nd;
+                read_ext2_inode(ROOTDEV, inode, &nd);
+                map_ext2_inode_with_xv6_inode(&nd, inode, rs);
+            }
+            brelse(bp);
+            return rs;
+        }
+
+        dentry_ptr += tmp_rec_len;
+    }
+    brelse(bp);
+    printf("didnt match %s \n", name);
     return 0;
 }
 
@@ -713,26 +757,33 @@ static char *skipelem(char *path, char *name) {
 static struct inode *namex(char *path, int nameiparent, char *name) {
     struct inode *ip, *next;
 
+    printf("namex : hello\n");
     if (*path == '/')
-        ip = iget(ROOTDEV, ROOTINO);
+        ip = iget(ROOTDEV, EXT2_ROOT_IID);
     else
         ip = idup(myproc()->cwd);
 
+    printf("namex : %d\n", ip->inum);
+
     while ((path = skipelem(path, name)) != 0) {
         ilock(ip);
+        printf("namex : %d , %d\n", ip->inum, ip->type);
         if (ip->type != T_DIR) {
             iunlockput(ip);
             return 0;
         }
+        printf("namex : %d\n", ip->inum);
         if (nameiparent && *path == '\0') {
             // Stop one level early.
             iunlock(ip);
             return ip;
         }
+        printf("namex : %d\n", ip->inum);
         if ((next = dirlookup(ip, name, 0)) == 0) {
             iunlockput(ip);
             return 0;
         }
+        printf("namex : %d\n", ip->inum);
         iunlockput(ip);
         ip = next;
     }
@@ -744,6 +795,7 @@ static struct inode *namex(char *path, int nameiparent, char *name) {
 }
 
 struct inode *namei(char *path) {
+    printf("access %s\n", path);
     char name[DIRSIZ];
     return namex(path, 0, name);
 }
