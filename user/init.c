@@ -21,17 +21,19 @@ int main(void) {
     dup(0); // stdout
     dup(0); // stderr
 
+    printf(" ***hello from init*** \n");
+
     for (;;) {
         printf("init: starting sh\n");
         pid = fork();
         if (pid < 0) {
             printf("init: fork failed\n");
-            // exit(1);
+            exit(1);
         }
         if (pid == 0) {
             exec("sh", argv);
             printf("init: exec sh failed\n");
-            // exit(1);
+            exit(1);
         }
 
         for (;;) {

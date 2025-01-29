@@ -143,12 +143,15 @@ UPROGS=\
 
 # fs.img: mkfs/mkfs README $(UPROGS)
 # 	mkfs/mkfs fs.img README $(UPROGS)
-fs.img: $(UPROGS)
+fs.img: $(UPROGS) README
 	truncate -s 2M fs.img
 	mkfs.ext2 -b 1024 -I 128 -N 128 fs.img
 	-mkdir tmpdir
 	sudo mount -o loop fs.img ./tmpdir/
-	sudo cp $(UPROGS) ./tmpdir/
+	sudo cp README $(UPROGS) ./tmpdir/
+	sudo chmod +777 ./tmpdir/*
+	# sudo cp $U/_init ./tmpdir/init
+	# sudo cp $U/_sh ./tmpdir/sh
 	sudo umount ./tmpdir/
 	rmdir tmpdir
 

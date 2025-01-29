@@ -15,6 +15,7 @@
 #include "sleeplock.h"
 #include "file.h"
 #include "fcntl.h"
+#include "buf.h"
 
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
@@ -226,6 +227,8 @@ static struct inode *create(char *path, short type, short major, short minor) {
     struct inode *ip, *dp;
     char          name[DIRSIZ];
 
+    printf("create sth in path : %s\n", path);
+
     if ((dp = nameiparent(path, name)) == 0)
         return 0;
 
@@ -239,11 +242,14 @@ static struct inode *create(char *path, short type, short major, short minor) {
         iunlockput(ip);
         return 0;
     }
+    printf("create sth in path : %s , ip.inum : %u\n", path, dp->inum);
 
-    if ((ip = ialloc(dp->dev, type)) == 0) {
+    if ((ip = ialloc(dp->dev, type, dp->inum)) == 0) {
         iunlockput(dp);
         return 0;
     }
+
+    printf("created : %u\n", ip->inum);
 
     ilock(ip);
     ip->major = major;
@@ -253,12 +259,35 @@ static struct inode *create(char *path, short type, short major, short minor) {
 
     if (type == T_DIR) { // Create . and .. entries.
         // No ip->nlink++ for ".": avoid cyclic ref count.
-        if (dirlink(ip, ".", ip->inum) < 0 || dirlink(ip, "..", dp->inum) < 0)
-            goto fail;
+        // if (dirlink(ip, ".", ip->inum) < 0 || dirlink(ip, "..", dp->inum) <
+        // 0)
+        //     goto fail;
     }
 
-    if (dirlink(dp, name, ip->inum) < 0)
-        goto fail;
+    // if (dirlink(dp, name, ip->inum) < 0)
+    //     goto fail;
+    printf("%u , %u\n", dp->inum, dp->addrs[0]);
+    struct buf *bp  = bread(ROOTDEV, dp->addrs[0]);
+    void       *ptr = bp->data;
+    for (;;) {
+        uint32 dentinum = *(uint32 *)(ptr);
+        if (dentinum == 0) {
+            uint8 name_len       = strlen(name);
+            *(uint32 *)(ptr + 0) = ip->inum;
+            *(uint16 *)(ptr + 4) = 1024 - ((uint64)ptr - (uint64)bp->data);
+            // printf("%u", )
+            *(uint8 *)(ptr + 6) = name_len;
+            *(uint8 *)(ptr + 7) = 2;
+            memmove(ptr + 8, name, name_len);
+            break;
+        }
+        uint16 denti_n       = (*(uint8 *)(ptr + 6) + 8 + 3) & (~3);
+        *(uint16 *)(ptr + 4) = denti_n;
+        printf("%u , fwd by %u\n", dentinum, denti_n);
+        ptr += denti_n;
+    }
+
+    brelse(bp);
 
     if (type == T_DIR) {
         // now that success is guaranteed:
@@ -279,7 +308,8 @@ fail:
     return 0;
 }
 
-uint64 sys_open(void) {
+struct file *cnsfile = 0;
+uint64       sys_open(void) {
     char          path[MAXPATH];
     int           fd, omode;
     struct file  *f;
@@ -291,7 +321,17 @@ uint64 sys_open(void) {
         return -1;
 
     begin_op();
-    printf("hello world\n");
+
+    if (namecmp(path, "console") == 0) {
+        if (!cnsfile) {
+            cnsfile           = filealloc();
+            cnsfile->type     = FD_DEVICE;
+            cnsfile->major    = CONSOLE;
+            cnsfile->writable = 1;
+            cnsfile->readable = 1;
+        }
+        return fdalloc(cnsfile);
+    }
 
     if (omode & O_CREATE) {
         ip = create(path, T_FILE, 0, 0);
@@ -352,31 +392,36 @@ uint64 sys_mkdir(void) {
     struct inode *ip;
 
     begin_op();
-    if (argstr(0, path, MAXPATH) < 0 || (ip = create(path, T_DIR, 0, 0)) == 0) {
+    // printf("hello mkdir");
+    if (argstr(0, path, MAXPATH) < 0) {
         end_op();
         return -1;
     }
+    if ((ip = create(path, T_DIR, 0, 0)) == 0) {
+        return -1;
+    }
+
     iunlockput(ip);
     end_op();
     return 0;
 }
 
 uint64 sys_mknod(void) {
-    panic("mknod");
-    struct inode *ip;
-    char          path[MAXPATH];
-    int           major, minor;
+    // panic("mknod");
+    // struct inode *ip;
+    // char          path[MAXPATH];
+    // int           major, minor;
 
-    begin_op();
-    argint(1, &major);
-    argint(2, &minor);
-    if ((argstr(0, path, MAXPATH)) < 0 ||
-        (ip = create(path, T_DEVICE, major, minor)) == 0) {
-        end_op();
-        return -1;
-    }
-    iunlockput(ip);
-    end_op();
+    // begin_op();
+    // argint(1, &major);
+    // argint(2, &minor);
+    // if ((argstr(0, path, MAXPATH)) < 0 ||
+    //     (ip = create(path, T_DEVICE, major, minor)) == 0) {
+    //     end_op();
+    //     return -1;
+    // }
+    // iunlockput(ip);
+    // end_op();
     return 0;
 }
 

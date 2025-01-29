@@ -30,7 +30,8 @@ struct ext2_super_block sb;
 struct ext2_group_desc  gd;
 
 int strcmp(char *a, char *b, int b_len) {
-    if (a[b_len])
+    if (a[b_len] != 0 && a[b_len] != '\n' && a[b_len] != ' ' &&
+        a[b_len] != '\t')
         return 1;
     for (int i = 0; i < b_len; i++)
         if (a[i] != b[i])
@@ -194,41 +195,51 @@ static void bzero(int dev, int bno) {
 // Allocate a zeroed disk block.
 // returns 0 if out of disk space.
 static uint balloc(uint dev) {
-    int         b, bi, m;
     struct buf *bp;
 
-    bp = 0;
-    for (b = 0; b < FILE_IMAGE_BLOCK_COUNT; b += BPB) {
-        bp = bread(dev, BBLOCK(b, sb));
-        for (bi = 0; bi < BPB && b + bi < FILE_IMAGE_BLOCK_COUNT; bi++) {
-            m = 1 << (bi % 8);
-            if ((bp->data[bi / 8] & m) == 0) { // Is block free?
-                bp->data[bi / 8] |= m;         // Mark block in use.
-                log_write(bp);
+    bp          = bread(dev, gd.bg_block_bitmap);
+    uint blknum = 0;
+    for (int i = 0; i < BSIZE / 8; i++) {
+        if (bp->data[i] == 0xff)
+            continue;
+        blknum = i * 8;
+        for (int j = 0x01; j <= 0x80; j <<= 1, blknum++)
+            if ((j & bp->data[i]) == 0) {
+                bp->data[i] |= j;
                 brelse(bp);
-                bzero(dev, b + bi);
-                return b + bi;
+                bzero(dev, blknum + 1);
+                return blknum + 1;
             }
-        }
-        brelse(bp);
     }
+    brelse(bp);
     printf("balloc: out of blocks\n");
     return 0;
 }
 
 // Free a disk block.
 static void bfree(int dev, uint b) {
+    if (b == 0)
+        panic("invalid free blk 0");
+    b--;
     struct buf *bp;
-    int         bi, m;
-
-    bp = bread(dev, BBLOCK(b, sb));
-    bi = b % BPB;
-    m  = 1 << (bi % 8);
-    if ((bp->data[bi / 8] & m) == 0)
+    bp          = bread(dev, gd.bg_block_bitmap);
+    uint nmbyte = b / 8;
+    uint byteP  = 1 << (b % 8);
+    if (bp->data[nmbyte] & byteP)
+        bp->data[nmbyte] ^= byteP;
+    else
         panic("freeing free block");
-    bp->data[bi / 8] &= ~m;
-    log_write(bp);
     brelse(bp);
+    // int         bi, m;
+
+    // bp = bread(dev, BBLOCK(b, sb));
+    // bi = b % BPB;
+    // m  = 1 << (bi % 8);
+    // if ((bp->data[bi / 8] & m) == 0)
+    //     panic("freeing free block");
+    // bp->data[bi / 8] &= ~m;
+    // log_write(bp);
+    // brelse(bp);
 }
 
 // Inodes.
@@ -315,25 +326,66 @@ static struct inode *iget(uint dev, uint inum);
 // Mark it as allocated by  giving it type type.
 // Returns an unlocked but allocated and referenced inode,
 // or NULL if there is no free inode.
-struct inode *ialloc(uint dev, short type) {
+struct inode *ialloc(uint dev, short type, uint par_inum) {
     int            inum;
     struct buf    *bp;
     struct dinode *dip;
 
-    for (inum = 1; inum < sb.s_inodes_count; inum++) {
-        bp  = bread(dev, IBLOCK(inum, sb));
-        dip = (struct dinode *)bp->data + inum % IPB;
-        if (dip->type == 0) { // a free inode
-            memset(dip, 0, sizeof(*dip));
-            dip->type = type;
-            log_write(bp); // mark it allocated on the disk
-            brelse(bp);
-            return iget(dev, inum);
-        }
-        brelse(bp);
+    uint first_blk = balloc(dev);
+    if (first_blk == 0) {
+        printf("no first blk\n");
+        return 0;
     }
-    printf("ialloc: no inodes\n");
+
+    bp = bread(dev, gd.bg_inode_bitmap);
+    for (int i = 0; i < 128 / 8; i++) {
+        if (bp->data[i] == 0xff)
+            continue;
+        inum = i * 8;
+        for (int j = 0x01; j <= 0x80; j <<= 1, inum++)
+            if ((j & bp->data[i]) == 0) {
+                bp->data[i] |= j;
+                goto found;
+            }
+    }
+    printf("no inode\n");
+    brelse(bp);
     return 0;
+
+found:
+    inum++;
+    struct ext2_inode nd;
+    memset(&nd, 0, sizeof(nd));
+    nd.i_block[0] = first_blk;
+    nd.i_size     = 1024;
+    if (type == T_DIR) {
+        nd.i_mode = 0x4000;
+        bp        = bread(dev, first_blk);
+        // .
+        *(uint32 *)(bp->data + 0) = inum; // inode_num
+        *(uint16 *)(bp->data + 4) = 12;   // tot_size
+        *(uint8 *)(bp->data + 6)  = 1;    // name_len
+        *(uint8 *)(bp->data + 7)  = 2;    // type_ind
+        *(uint8 *)(bp->data + 8)  = '.';  // name[0]
+        //..
+        *(uint32 *)(bp->data + 12) = par_inum; // inode_num
+        *(uint16 *)(bp->data + 16) = 12;       // tot_size
+        *(uint8 *)(bp->data + 18)  = 2;        // name_len
+        *(uint8 *)(bp->data + 19)  = 2;        // type_ind
+        *(uint8 *)(bp->data + 20)  = '.';      // name[0]
+        *(uint8 *)(bp->data + 21)  = '.';      // name[1]
+
+        brelse(bp);
+    } else
+        nd.i_mode = 0x8000;
+
+    bp = bread(dev, (inum / 16) + gd.bg_inode_table);
+    memmove(bp->data + (inum % 16) * 128, &nd, 128);
+    brelse(bp);
+
+    struct inode *ip = iget(dev, inum);
+    map_ext2_inode_with_xv6_inode(&nd, inum, ip);
+    return ip;
 }
 
 // Copy a modified in-memory inode to disk.
@@ -360,7 +412,7 @@ void iupdate(struct inode *ip) {
 // and return the in-memory copy. Does not lock
 // the inode and does not read it from disk.
 static struct inode *iget(uint dev, uint inum) {
-    printf("iget %d %d\n", dev, inum);
+    // printf("iget %d %d\n", dev, inum);
     struct inode *ip, *empty;
 
     // Is the inode already in the table?
@@ -632,7 +684,7 @@ struct inode *dirlookup(struct inode *dp, char *name, uint *poff) { // TODO
     uint          off, inum;
     struct dirent de;
 
-    printf("dirlookup find %s \n", name);
+    // printf("dirlookup find %s \n", name);
 
     if (dp->type != T_DIR)
         panic("dirlookup not DIR");
@@ -647,7 +699,7 @@ struct inode *dirlookup(struct inode *dp, char *name, uint *poff) { // TODO
     __u8   tmp_file_type;
     char  *tmp_name; /* File name, up to EXT2_NAME_LEN */
 
-    printf("dir size : %d\n", dp->size);
+    // printf("dir size : %d\n", dp->size);
     bp         = bread(ROOTDEV, dp->addrs[0]);
     dentry_ptr = bp->data;
     for (int i = 0; i < 64; i++) { // list upto 64 sub-entry
@@ -665,6 +717,7 @@ struct inode *dirlookup(struct inode *dp, char *name, uint *poff) { // TODO
         memmove(&tmp_file_type, ptr, sizeof(tmp_file_type));
         ptr += sizeof(tmp_file_type);
         tmp_name = ptr;
+        // printf("compare %s , %s \n", name, tmp_name);
         if (strcmp(name, tmp_name, tmp_name_len) == 0) {
             uint          inode = tmp_inode;
             struct inode *rs    = iget(ROOTDEV, inode);
@@ -680,7 +733,7 @@ struct inode *dirlookup(struct inode *dp, char *name, uint *poff) { // TODO
         dentry_ptr += tmp_rec_len;
     }
     brelse(bp);
-    printf("didnt match %s \n", name);
+    // printf("didnt match %s \n", name);
     return 0;
 }
 
@@ -757,33 +810,32 @@ static char *skipelem(char *path, char *name) {
 static struct inode *namex(char *path, int nameiparent, char *name) {
     struct inode *ip, *next;
 
-    printf("namex : hello\n");
     if (*path == '/')
         ip = iget(ROOTDEV, EXT2_ROOT_IID);
     else
         ip = idup(myproc()->cwd);
 
-    printf("namex : %d\n", ip->inum);
+    // printf("namex : %d\n", ip->inum);
 
     while ((path = skipelem(path, name)) != 0) {
         ilock(ip);
-        printf("namex : %d , %d\n", ip->inum, ip->type);
+        // printf("namex : %d , %d\n", ip->inum, ip->type);
         if (ip->type != T_DIR) {
             iunlockput(ip);
             return 0;
         }
-        printf("namex : %d\n", ip->inum);
+        // printf("namex : %d\n", ip->inum);
         if (nameiparent && *path == '\0') {
             // Stop one level early.
             iunlock(ip);
             return ip;
         }
-        printf("namex : %d\n", ip->inum);
+        // printf("namex : %d\n", ip->inum);
         if ((next = dirlookup(ip, name, 0)) == 0) {
             iunlockput(ip);
             return 0;
         }
-        printf("namex : %d\n", ip->inum);
+        // printf("namex : %d\n", ip->inum);
         iunlockput(ip);
         ip = next;
     }
@@ -795,7 +847,7 @@ static struct inode *namex(char *path, int nameiparent, char *name) {
 }
 
 struct inode *namei(char *path) {
-    printf("access %s\n", path);
+    // printf("access %s\n", path);
     char name[DIRSIZ];
     return namex(path, 0, name);
 }
