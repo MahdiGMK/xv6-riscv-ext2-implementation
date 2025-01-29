@@ -21,6 +21,7 @@
 #include "buf.h"
 #include "file.h"
 #include "defs.h"
+#include <complex.h>
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 // there should be one superblock per disk device, but we run with
@@ -68,6 +69,11 @@ void read_ext2_inode(uint dev, uint iid, struct ext2_inode *nd) {
     memmove(nd, bp->data + piblk, sizeof(struct ext2_inode));
     brelse(bp);
 }
+struct buf *read_ext2_inode_data(uint dev, struct ext2_inode *nd, uint blkidx) {
+    if (blkidx * BSIZE > nd->i_size)
+        return 0;
+    return bread(dev, nd->i_block[blkidx]);
+}
 void list_ext2_dir_files(uint dev, struct ext2_inode *nd) {
     struct buf *bp;
     char       *ptr        = 0;
@@ -80,7 +86,9 @@ void list_ext2_dir_files(uint dev, struct ext2_inode *nd) {
     char  *tmp_name; /* File name, up to EXT2_NAME_LEN */
 
     printf("dir size : %d\n", nd->i_size);
-    bp         = bread(dev, nd->i_block[0]);
+    bp = read_ext2_inode_data(dev, nd, 0);
+    if (!bp)
+        return;
     dentry_ptr = bp->data;
     for (int i = 0; i < 64; i++) { // list upto 64 sub-entry
         ptr = dentry_ptr;
