@@ -56,13 +56,16 @@ static void readgd(int dev, struct ext2_group_desc *gd) {
 
 // Init fs
 void fsinit(int dev) {
-    panic("wtf");
     readsb(dev, &sb);
     readgd(dev, &gd);
-    if (sb.s_magic != FSMAGIC)
+
+    printf("sb.magic : %x\n", sb.s_magic);
+    printf("sb.first_ino : %d\n", sb.s_first_ino);
+    printf("gd.free_inodes_count : %d\n", gd.bg_free_inodes_count);
+    printf("gd.free_blocks_count : %d\n", gd.bg_free_blocks_count);
+
+    if (sb.s_magic != EXT2MAGIC)
         panic("invalid file system");
-    // initlog(dev, &sb);
-    printf("salam");
 }
 
 // Zero a block.

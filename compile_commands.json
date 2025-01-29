@@ -7,9 +7,9 @@
       "kernel/entry.o",
       "kernel/entry.S"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/entry.S",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/entry.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/entry.S",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/entry.o"
   },
   {
     "arguments": [
@@ -48,9 +48,9 @@
       "kernel/start.o",
       "kernel/start.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/start.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/start.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/start.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/start.o"
   },
   {
     "arguments": [
@@ -89,9 +89,9 @@
       "kernel/console.o",
       "kernel/console.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/console.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/console.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/console.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/console.o"
   },
   {
     "arguments": [
@@ -130,9 +130,9 @@
       "kernel/printf.o",
       "kernel/printf.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/printf.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/printf.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/printf.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/printf.o"
   },
   {
     "arguments": [
@@ -171,9 +171,9 @@
       "kernel/uart.o",
       "kernel/uart.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/uart.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/uart.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/uart.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/uart.o"
   },
   {
     "arguments": [
@@ -212,9 +212,9 @@
       "kernel/kalloc.o",
       "kernel/kalloc.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/kalloc.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/kalloc.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/kalloc.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/kalloc.o"
   },
   {
     "arguments": [
@@ -253,9 +253,9 @@
       "kernel/spinlock.o",
       "kernel/spinlock.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/spinlock.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/spinlock.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/spinlock.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/spinlock.o"
   },
   {
     "arguments": [
@@ -294,9 +294,9 @@
       "kernel/string.o",
       "kernel/string.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/string.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/string.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/string.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/string.o"
   },
   {
     "arguments": [
@@ -335,9 +335,9 @@
       "kernel/main.o",
       "kernel/main.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/main.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/main.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/main.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/main.o"
   },
   {
     "arguments": [
@@ -376,9 +376,21 @@
       "kernel/vm.o",
       "kernel/vm.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/vm.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/vm.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/vm.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/vm.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/riscv64-linux-gnu-gcc",
+      "-c",
+      "-o",
+      "kernel/swtch.o",
+      "kernel/swtch.S"
+    ],
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/swtch.S",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/swtch.o"
   },
   {
     "arguments": [
@@ -417,21 +429,9 @@
       "kernel/proc.o",
       "kernel/proc.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/proc.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/proc.o"
-  },
-  {
-    "arguments": [
-      "/usr/bin/riscv64-linux-gnu-gcc",
-      "-c",
-      "-o",
-      "kernel/swtch.o",
-      "kernel/swtch.S"
-    ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/swtch.S",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/swtch.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/proc.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/proc.o"
   },
   {
     "arguments": [
@@ -441,9 +441,9 @@
       "kernel/trampoline.o",
       "kernel/trampoline.S"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/trampoline.S",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/trampoline.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/trampoline.S",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/trampoline.o"
   },
   {
     "arguments": [
@@ -482,9 +482,9 @@
       "kernel/trap.o",
       "kernel/trap.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/trap.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/trap.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/trap.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/trap.o"
   },
   {
     "arguments": [
@@ -523,9 +523,9 @@
       "kernel/syscall.o",
       "kernel/syscall.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/syscall.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/syscall.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/syscall.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/syscall.o"
   },
   {
     "arguments": [
@@ -564,9 +564,9 @@
       "kernel/sysproc.o",
       "kernel/sysproc.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/sysproc.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/sysproc.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/sysproc.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/sysproc.o"
   },
   {
     "arguments": [
@@ -605,9 +605,9 @@
       "kernel/bio.o",
       "kernel/bio.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/bio.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/bio.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/bio.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/bio.o"
   },
   {
     "arguments": [
@@ -646,9 +646,9 @@
       "kernel/fs_ext2.o",
       "kernel/fs_ext2.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/fs_ext2.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/fs_ext2.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/fs_ext2.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/fs_ext2.o"
   },
   {
     "arguments": [
@@ -687,8 +687,352 @@
       "kernel/log.o",
       "kernel/log.c"
     ],
-    "directory": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation",
-    "file": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/log.c",
-    "output": "/home/donya/code/os/proejct/xv6-riscv-ext2-implementation/kernel/log.o"
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/log.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/log.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/riscv64-linux-gnu-gcc",
+      "-Wall",
+      "-Werror",
+      "-O",
+      "-fno-omit-frame-pointer",
+      "-ggdb",
+      "-gdwarf-2",
+      "-mcmodel=medany",
+      "-fno-common",
+      "-fno-builtin-strncpy",
+      "-fno-builtin-strncmp",
+      "-fno-builtin-strlen",
+      "-fno-builtin-memset",
+      "-fno-builtin-memmove",
+      "-fno-builtin-memcmp",
+      "-fno-builtin-log",
+      "-fno-builtin-bzero",
+      "-fno-builtin-strchr",
+      "-fno-builtin-exit",
+      "-fno-builtin-malloc",
+      "-fno-builtin-putc",
+      "-fno-builtin-free",
+      "-fno-builtin-memcpy",
+      "-Wno-main",
+      "-fno-builtin-printf",
+      "-fno-builtin-fprintf",
+      "-fno-builtin-vprintf",
+      "-I.",
+      "-fno-stack-protector",
+      "-fno-pie",
+      "-c",
+      "-o",
+      "kernel/sleeplock.o",
+      "kernel/sleeplock.c"
+    ],
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/sleeplock.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/sleeplock.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/riscv64-linux-gnu-gcc",
+      "-Wall",
+      "-Werror",
+      "-O",
+      "-fno-omit-frame-pointer",
+      "-ggdb",
+      "-gdwarf-2",
+      "-mcmodel=medany",
+      "-fno-common",
+      "-fno-builtin-strncpy",
+      "-fno-builtin-strncmp",
+      "-fno-builtin-strlen",
+      "-fno-builtin-memset",
+      "-fno-builtin-memmove",
+      "-fno-builtin-memcmp",
+      "-fno-builtin-log",
+      "-fno-builtin-bzero",
+      "-fno-builtin-strchr",
+      "-fno-builtin-exit",
+      "-fno-builtin-malloc",
+      "-fno-builtin-putc",
+      "-fno-builtin-free",
+      "-fno-builtin-memcpy",
+      "-Wno-main",
+      "-fno-builtin-printf",
+      "-fno-builtin-fprintf",
+      "-fno-builtin-vprintf",
+      "-I.",
+      "-fno-stack-protector",
+      "-fno-pie",
+      "-c",
+      "-o",
+      "kernel/file.o",
+      "kernel/file.c"
+    ],
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/file.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/file.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/riscv64-linux-gnu-gcc",
+      "-Wall",
+      "-Werror",
+      "-O",
+      "-fno-omit-frame-pointer",
+      "-ggdb",
+      "-gdwarf-2",
+      "-mcmodel=medany",
+      "-fno-common",
+      "-fno-builtin-strncpy",
+      "-fno-builtin-strncmp",
+      "-fno-builtin-strlen",
+      "-fno-builtin-memset",
+      "-fno-builtin-memmove",
+      "-fno-builtin-memcmp",
+      "-fno-builtin-log",
+      "-fno-builtin-bzero",
+      "-fno-builtin-strchr",
+      "-fno-builtin-exit",
+      "-fno-builtin-malloc",
+      "-fno-builtin-putc",
+      "-fno-builtin-free",
+      "-fno-builtin-memcpy",
+      "-Wno-main",
+      "-fno-builtin-printf",
+      "-fno-builtin-fprintf",
+      "-fno-builtin-vprintf",
+      "-I.",
+      "-fno-stack-protector",
+      "-fno-pie",
+      "-c",
+      "-o",
+      "kernel/pipe.o",
+      "kernel/pipe.c"
+    ],
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/pipe.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/pipe.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/riscv64-linux-gnu-gcc",
+      "-Wall",
+      "-Werror",
+      "-O",
+      "-fno-omit-frame-pointer",
+      "-ggdb",
+      "-gdwarf-2",
+      "-mcmodel=medany",
+      "-fno-common",
+      "-fno-builtin-strncpy",
+      "-fno-builtin-strncmp",
+      "-fno-builtin-strlen",
+      "-fno-builtin-memset",
+      "-fno-builtin-memmove",
+      "-fno-builtin-memcmp",
+      "-fno-builtin-log",
+      "-fno-builtin-bzero",
+      "-fno-builtin-strchr",
+      "-fno-builtin-exit",
+      "-fno-builtin-malloc",
+      "-fno-builtin-putc",
+      "-fno-builtin-free",
+      "-fno-builtin-memcpy",
+      "-Wno-main",
+      "-fno-builtin-printf",
+      "-fno-builtin-fprintf",
+      "-fno-builtin-vprintf",
+      "-I.",
+      "-fno-stack-protector",
+      "-fno-pie",
+      "-c",
+      "-o",
+      "kernel/exec.o",
+      "kernel/exec.c"
+    ],
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/exec.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/exec.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/riscv64-linux-gnu-gcc",
+      "-Wall",
+      "-Werror",
+      "-O",
+      "-fno-omit-frame-pointer",
+      "-ggdb",
+      "-gdwarf-2",
+      "-mcmodel=medany",
+      "-fno-common",
+      "-fno-builtin-strncpy",
+      "-fno-builtin-strncmp",
+      "-fno-builtin-strlen",
+      "-fno-builtin-memset",
+      "-fno-builtin-memmove",
+      "-fno-builtin-memcmp",
+      "-fno-builtin-log",
+      "-fno-builtin-bzero",
+      "-fno-builtin-strchr",
+      "-fno-builtin-exit",
+      "-fno-builtin-malloc",
+      "-fno-builtin-putc",
+      "-fno-builtin-free",
+      "-fno-builtin-memcpy",
+      "-Wno-main",
+      "-fno-builtin-printf",
+      "-fno-builtin-fprintf",
+      "-fno-builtin-vprintf",
+      "-I.",
+      "-fno-stack-protector",
+      "-fno-pie",
+      "-c",
+      "-o",
+      "kernel/sysfile.o",
+      "kernel/sysfile.c"
+    ],
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/sysfile.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/sysfile.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/riscv64-linux-gnu-gcc",
+      "-c",
+      "-o",
+      "kernel/kernelvec.o",
+      "kernel/kernelvec.S"
+    ],
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/kernelvec.S",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/kernelvec.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/riscv64-linux-gnu-gcc",
+      "-Wall",
+      "-Werror",
+      "-O",
+      "-fno-omit-frame-pointer",
+      "-ggdb",
+      "-gdwarf-2",
+      "-mcmodel=medany",
+      "-fno-common",
+      "-fno-builtin-strncpy",
+      "-fno-builtin-strncmp",
+      "-fno-builtin-strlen",
+      "-fno-builtin-memset",
+      "-fno-builtin-memmove",
+      "-fno-builtin-memcmp",
+      "-fno-builtin-log",
+      "-fno-builtin-bzero",
+      "-fno-builtin-strchr",
+      "-fno-builtin-exit",
+      "-fno-builtin-malloc",
+      "-fno-builtin-putc",
+      "-fno-builtin-free",
+      "-fno-builtin-memcpy",
+      "-Wno-main",
+      "-fno-builtin-printf",
+      "-fno-builtin-fprintf",
+      "-fno-builtin-vprintf",
+      "-I.",
+      "-fno-stack-protector",
+      "-fno-pie",
+      "-c",
+      "-o",
+      "kernel/plic.o",
+      "kernel/plic.c"
+    ],
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/plic.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/plic.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/riscv64-linux-gnu-gcc",
+      "-Wall",
+      "-Werror",
+      "-O",
+      "-fno-omit-frame-pointer",
+      "-ggdb",
+      "-gdwarf-2",
+      "-mcmodel=medany",
+      "-fno-common",
+      "-fno-builtin-strncpy",
+      "-fno-builtin-strncmp",
+      "-fno-builtin-strlen",
+      "-fno-builtin-memset",
+      "-fno-builtin-memmove",
+      "-fno-builtin-memcmp",
+      "-fno-builtin-log",
+      "-fno-builtin-bzero",
+      "-fno-builtin-strchr",
+      "-fno-builtin-exit",
+      "-fno-builtin-malloc",
+      "-fno-builtin-putc",
+      "-fno-builtin-free",
+      "-fno-builtin-memcpy",
+      "-Wno-main",
+      "-fno-builtin-printf",
+      "-fno-builtin-fprintf",
+      "-fno-builtin-vprintf",
+      "-I.",
+      "-fno-stack-protector",
+      "-fno-pie",
+      "-c",
+      "-o",
+      "kernel/virtio_disk.o",
+      "kernel/virtio_disk.c"
+    ],
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/virtio_disk.c",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/kernel/virtio_disk.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/riscv64-linux-gnu-gcc",
+      "-Wall",
+      "-Werror",
+      "-O",
+      "-fno-omit-frame-pointer",
+      "-ggdb",
+      "-gdwarf-2",
+      "-mcmodel=medany",
+      "-fno-common",
+      "-fno-builtin-strncpy",
+      "-fno-builtin-strncmp",
+      "-fno-builtin-strlen",
+      "-fno-builtin-memset",
+      "-fno-builtin-memmove",
+      "-fno-builtin-memcmp",
+      "-fno-builtin-log",
+      "-fno-builtin-bzero",
+      "-fno-builtin-strchr",
+      "-fno-builtin-exit",
+      "-fno-builtin-malloc",
+      "-fno-builtin-putc",
+      "-fno-builtin-free",
+      "-fno-builtin-memcpy",
+      "-Wno-main",
+      "-fno-builtin-printf",
+      "-fno-builtin-fprintf",
+      "-fno-builtin-vprintf",
+      "-I.",
+      "-fno-stack-protector",
+      "-fno-pie",
+      "-march=rv64g",
+      "-nostdinc",
+      "-I.",
+      "-Ikernel",
+      "-c",
+      "-o",
+      "user/initcode.o",
+      "user/initcode.S"
+    ],
+    "directory": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation",
+    "file": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/user/initcode.S",
+    "output": "/home/mahdigmk/DevEnv/SUT/OS/Project/xv6-riscv-ext2-implementation/user/initcode.o"
   }
 ]
