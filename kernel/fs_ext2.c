@@ -26,7 +26,7 @@
 // there should be one superblock per disk device, but we run with
 // only one device
 struct ext2_super_block sb;
-struct ext2_group_desc  gd; // TODO: uncomment and add groupdescriptor struct
+struct ext2_group_desc  gd;
 
 // Read the super block.
 static void readsb(int dev, struct ext2_super_block *sb) {
@@ -44,7 +44,6 @@ static void readgd(int dev, struct ext2_group_desc *gd) {
     bp = bread(dev, 2);
     memmove(gd, bp->data, sizeof(*gd));
     brelse(bp);
-    // TODO: check whether it's alright to use simple memmove or not
 }
 
 // TODO: reaching inodes via some sort of function (block index = (inode - 1) /
@@ -62,6 +61,7 @@ void fsinit(int dev) {
     printf("sb.s_magic : %x\n", sb.s_magic);
     printf("sb.s_first_ino : %d\n", sb.s_first_ino);
     printf("sb.s_blocks_count : %d\n", sb.s_blocks_count);
+    printf("sb.s_inodes_count : %d\n", sb.s_inodes_count);
     printf("sb.s_r_blocks_count : %d\n", sb.s_r_blocks_count);
     printf("\n");
     printf("gd.bg_free_inodes_count : %d\n", gd.bg_free_inodes_count);
