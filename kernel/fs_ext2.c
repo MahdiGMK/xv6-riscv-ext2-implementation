@@ -59,10 +59,16 @@ void fsinit(int dev) {
     readsb(dev, &sb);
     readgd(dev, &gd);
 
-    printf("sb.magic : %x\n", sb.s_magic);
-    printf("sb.first_ino : %d\n", sb.s_first_ino);
-    printf("gd.free_inodes_count : %d\n", gd.bg_free_inodes_count);
-    printf("gd.free_blocks_count : %d\n", gd.bg_free_blocks_count);
+    printf("sb.s_magic : %x\n", sb.s_magic);
+    printf("sb.s_first_ino : %d\n", sb.s_first_ino);
+    printf("sb.s_blocks_count : %d\n", sb.s_blocks_count);
+    printf("sb.s_r_blocks_count : %d\n", sb.s_r_blocks_count);
+    printf("\n");
+    printf("gd.bg_free_inodes_count : %d\n", gd.bg_free_inodes_count);
+    printf("gd.bg_free_blocks_count : %d\n", gd.bg_free_blocks_count);
+    printf("gd.bg_inode_table : %d\n", gd.bg_inode_table);
+    printf("gd.bg_inode_bitmap : %d\n", gd.bg_inode_bitmap);
+    printf("gd.bg_block_bitmap : %d\n", gd.bg_block_bitmap);
 
     if (sb.s_magic != EXT2MAGIC)
         panic("invalid file system");
