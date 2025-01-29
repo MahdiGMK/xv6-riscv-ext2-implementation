@@ -68,6 +68,56 @@ void read_ext2_inode(uint dev, uint iid, struct ext2_inode *nd) {
     memmove(nd, bp->data + piblk, sizeof(struct ext2_inode));
     brelse(bp);
 }
+void list_ext2_dir_files(uint dev, struct ext2_inode *nd) {
+    struct buf *bp;
+    char       *ptr        = 0;
+    void       *dentry_ptr = 0;
+
+    __le32 tmp_inode;    /* Inode number */
+    __le16 tmp_rec_len;  /* Directory entry length */
+    __u8   tmp_name_len; /* Name length */
+    __u8   tmp_file_type;
+    char  *tmp_name; /* File name, up to EXT2_NAME_LEN */
+
+    printf("dir size : %d\n", nd->i_size);
+    bp         = bread(dev, nd->i_block[0]);
+    dentry_ptr = bp->data;
+    for (int i = 0; i < 64; i++) { // list upto 64 sub-entry
+        ptr = dentry_ptr;
+
+        memmove(&tmp_inode, ptr, sizeof(tmp_inode));
+        ptr += sizeof(tmp_inode);
+        if (!tmp_inode)
+            break;
+
+        memmove(&tmp_rec_len, ptr, sizeof(tmp_rec_len));
+        ptr += sizeof(tmp_rec_len);
+        memmove(&tmp_name_len, ptr, sizeof(tmp_name_len));
+        ptr += sizeof(tmp_name_len);
+        memmove(&tmp_file_type, ptr, sizeof(tmp_file_type));
+        ptr += sizeof(tmp_file_type);
+        tmp_name = ptr;
+        if (tmp_file_type == 2)
+            printf("inode : %d \t| DIR   \t| %s\n", tmp_inode, tmp_name);
+        else if (tmp_file_type == 1)
+            printf("inode : %d \t| FILE  \t| %s\n", tmp_inode, tmp_name);
+        else
+            printf("inode : %d \t| file_type : %d \t-- %s\n", tmp_inode,
+                   tmp_file_type, tmp_name);
+
+        dentry_ptr += tmp_rec_len;
+    }
+
+    // memmove(tmp_dirent., const void *, uint)
+
+    brelse(bp);
+    // bp
+    // for (i = 0; i < 12 && i * BSIZE < nd->i_size; i++) {
+    //     bp = bread(dev, nd->i_block[i]);
+
+    //     brelse(bp);
+    // };
+}
 // Init fs
 void fsinit(int dev) {
     readsb(dev, &sb);
@@ -91,6 +141,7 @@ void fsinit(int dev) {
     struct ext2_inode rootnode;
     read_ext2_inode(dev, 2, &rootnode);
     printf("root mode : %x\n", rootnode.i_mode);
+    list_ext2_dir_files(dev, &rootnode);
 }
 
 // Zero a block.
