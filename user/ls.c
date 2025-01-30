@@ -32,7 +32,7 @@ void ls(char *path) {
     int                fd;
     struct ext2_dirent de;
     struct stat        st;
-    char               name_buf[256];
+    char               name_buf[2048];
 
     if ((fd = open(path, O_RDONLY)) < 0) {
         fprintf(2, "ls: cannot open %s\n", path);
@@ -63,7 +63,7 @@ void ls(char *path) {
         while (read(fd, &de, sizeof(de)) == sizeof(de)) {
             if (de.inode == 0)
                 continue;
-            read(fd, name_buf, (de.name_len + 3) & (~3));
+            read(fd, name_buf, de.rec_len - sizeof(de));
             // memmove(p, de.name, DIRSIZ);
             // p[DIRSIZ] = 0;
             name_buf[de.name_len] = 0;
@@ -82,10 +82,13 @@ void ls(char *path) {
 }
 
 int main(int argc, char *argv[]) {
-    int i;
+    int  i;
+    char path[128];
+    gets(path, 128);
+    path[strlen(path) - 1] = 0;
 
     if (argc < 2) {
-        ls(".");
+        ls(path);
         exit(0);
     }
     for (i = 1; i < argc; i++)

@@ -72,6 +72,18 @@ uint64 sys_read(void) {
     return fileread(f, p, n);
 }
 
+uint64 sys_append(void) {
+    struct file *f;
+    int          n;
+    uint64       p;
+
+    argaddr(1, &p);
+    argint(2, &n);
+    if (argfd(0, 0, &f) < 0)
+        return -1;
+
+    return fileappend(f, p, n);
+}
 uint64 sys_write(void) {
     struct file *f;
     int          n;
@@ -168,11 +180,17 @@ static int isdirempty(struct inode *dp) {
     return 1;
 }
 
+struct ext2_dirent {
+    uint32 inode;    /* Inode number */
+    uint16 rec_len;  /* Directory entry length */
+    uint8  name_len; /* Name length */
+    uint8  file_type;
+};
 uint64 sys_unlink(void) {
-    struct inode *ip, *dp;
-    struct dirent de;
-    char          name[DIRSIZ], path[MAXPATH];
-    uint          off;
+    struct inode      *ip, *dp;
+    struct ext2_dirent de;
+    char               name[DIRSIZ], path[MAXPATH];
+    uint               off;
 
     if (argstr(0, path, MAXPATH) < 0)
         return -1;
@@ -193,16 +211,30 @@ uint64 sys_unlink(void) {
         goto bad;
     ilock(ip);
 
-    if (ip->nlink < 1)
-        panic("unlink: nlink < 1");
-    if (ip->type == T_DIR && !isdirempty(ip)) {
-        iunlockput(ip);
-        goto bad;
+    struct buf *bp   = bread(ROOTDEV, dp->addrs[0]);
+    void       *ptr  = bp->data;
+    void       *pptr = 0;
+    for (;;) {
+        memmove(&de, ptr, sizeof(de));
+        if (de.inode == ip->inum) {
+            *(uint16 *)(pptr + 4) += de.rec_len; // prev rec len += cur reclen
+            break;
+        }
+        pptr = ptr;
+        ptr += de.rec_len;
     }
+    brelse(bp);
 
-    memset(&de, 0, sizeof(de));
-    if (writei(dp, 0, (uint64)&de, off, sizeof(de)) != sizeof(de))
-        panic("unlink: writei");
+    // // if (ip->nlink < 1)
+    // //     panic("unlink: nlink < 1");
+    // if (ip->type == T_DIR && !isdirempty(ip)) {
+    //     iunlockput(ip);
+    //     goto bad;
+    // }
+
+    // memset(&de, 0, sizeof(de));
+    // if (writei(dp, 0, (uint64)&de, off, sizeof(de)) != sizeof(de))
+    //     panic("unlink: writei");
     if (ip->type == T_DIR) {
         dp->nlink--;
         iupdate(dp);
@@ -223,6 +255,12 @@ bad:
     return -1;
 }
 
+// struct ext2_dirent {
+//     uint32 inode;    /* Inode number */
+//     uint16 rec_len;  /* Directory entry length */
+//     uint8  name_len; /* Name length */
+//     uint8  file_type;
+// };
 static struct inode *create(char *path, short type, short major, short minor) {
     struct inode *ip, *dp;
     char          name[DIRSIZ];
@@ -267,26 +305,32 @@ static struct inode *create(char *path, short type, short major, short minor) {
     // if (dirlink(dp, name, ip->inum) < 0)
     //     goto fail;
     printf("%u , %u\n", dp->inum, dp->addrs[0]);
-    struct buf *bp  = bread(ROOTDEV, dp->addrs[0]);
-    void       *ptr = bp->data;
+    struct buf        *bp  = bread(ROOTDEV, dp->addrs[0]);
+    void              *ptr = bp->data;
+    struct ext2_dirent dent;
+    struct ext2_dirent new_dent;
+    new_dent.name_len = strlen(name);
+    new_dent.inode    = ip->inum;
+    if (type == T_DIR)
+        new_dent.file_type = 2;
+    else
+        new_dent.file_type = 1;
+
+    uint new_ent_size = (8 + strlen(name) + 3) & (~3);
     for (;;) {
-        uint32 dentinum = *(uint32 *)(ptr);
-        if (dentinum == 0) {
-            uint8 name_len       = strlen(name);
-            *(uint32 *)(ptr + 0) = ip->inum;
-            *(uint16 *)(ptr + 4) = 1024 - ((uint64)ptr - (uint64)bp->data);
-            // printf("%u", )
-            *(uint8 *)(ptr + 6) = name_len;
-            *(uint8 *)(ptr + 7) = 2;
-            memmove(ptr + 8, name, name_len);
+        memmove(&dent, ptr, sizeof(dent));
+        uint dent_ent_size = (8 + dent.name_len + 3) & (~3);
+        uint emp_blk       = dent.rec_len - dent_ent_size;
+        if (new_ent_size <= emp_blk) {
+            new_dent.rec_len = emp_blk;                                // space
+            dent.rec_len     = dent_ent_size;                          //
+            memmove(ptr + dent_ent_size, &new_dent, sizeof(dent));     // header
+            memmove(ptr + dent_ent_size + 8, name, new_dent.name_len); // name
+            memmove(ptr, &dent, sizeof(dent));
             break;
         }
-        uint16 denti_n       = (*(uint8 *)(ptr + 6) + 8 + 3) & (~3);
-        *(uint16 *)(ptr + 4) = denti_n;
-        printf("%u , fwd by %u\n", dentinum, denti_n);
-        ptr += denti_n;
+        ptr += dent.rec_len;
     }
-
     brelse(bp);
 
     if (type == T_DIR) {

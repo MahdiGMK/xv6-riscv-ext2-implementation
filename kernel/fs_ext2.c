@@ -331,10 +331,13 @@ struct inode *ialloc(uint dev, short type, uint par_inum) {
     struct buf    *bp;
     struct dinode *dip;
 
-    uint first_blk = balloc(dev);
-    if (first_blk == 0) {
-        printf("no first blk\n");
-        return 0;
+    uint first_blk = 0;
+    if (type == T_DIR) {
+        first_blk = balloc(dev);
+        if (first_blk == 0) {
+            printf("no first blk\n");
+            return 0;
+        }
     }
 
     bp = bread(dev, gd.bg_inode_bitmap);
@@ -345,6 +348,7 @@ struct inode *ialloc(uint dev, short type, uint par_inum) {
         for (int j = 0x01; j <= 0x80; j <<= 1, inum++)
             if ((j & bp->data[i]) == 0) {
                 bp->data[i] |= j;
+                brelse(bp);
                 goto found;
             }
     }
@@ -357,8 +361,8 @@ found:
     struct ext2_inode nd;
     memset(&nd, 0, sizeof(nd));
     nd.i_block[0] = first_blk;
-    nd.i_size     = 1024;
     if (type == T_DIR) {
+        nd.i_size = 1024;
         nd.i_mode = 0x4000;
         bp        = bread(dev, first_blk);
         // .
@@ -368,12 +372,12 @@ found:
         *(uint8 *)(bp->data + 7)  = 2;    // type_ind
         *(uint8 *)(bp->data + 8)  = '.';  // name[0]
         //..
-        *(uint32 *)(bp->data + 12) = par_inum; // inode_num
-        *(uint16 *)(bp->data + 16) = 12;       // tot_size
-        *(uint8 *)(bp->data + 18)  = 2;        // name_len
-        *(uint8 *)(bp->data + 19)  = 2;        // type_ind
-        *(uint8 *)(bp->data + 20)  = '.';      // name[0]
-        *(uint8 *)(bp->data + 21)  = '.';      // name[1]
+        *(uint32 *)(bp->data + 12) = par_inum;  // inode_num
+        *(uint16 *)(bp->data + 16) = 1024 - 12; // tot_size
+        *(uint8 *)(bp->data + 18)  = 2;         // name_len
+        *(uint8 *)(bp->data + 19)  = 2;         // type_ind
+        *(uint8 *)(bp->data + 20)  = '.';       // name[0]
+        *(uint8 *)(bp->data + 21)  = '.';       // name[1]
 
         brelse(bp);
     } else
@@ -393,17 +397,20 @@ found:
 // that lives on disk.
 // Caller must hold ip->lock.
 void iupdate(struct inode *ip) {
-    struct buf    *bp;
-    struct dinode *dip;
+    struct buf        *bp;
+    struct ext2_inode *dip;
 
-    bp         = bread(ip->dev, IBLOCK(ip->inum, sb));
-    dip        = (struct dinode *)bp->data + ip->inum % IPB;
-    dip->type  = ip->type;
-    dip->major = ip->major;
-    dip->minor = ip->minor;
-    dip->nlink = ip->nlink;
-    dip->size  = ip->size;
-    memmove(dip->addrs, ip->addrs, sizeof(ip->addrs));
+    bp  = bread(ip->dev, IBLOCK(ip->inum, sb));
+    dip = (struct ext2_inode *)bp->data + ip->inum % IPB;
+    if (ip->type == T_DIR)
+        dip->i_mode = 0x4000;
+    else
+        dip->i_mode = 0x8000;
+    // dip->major = ip->major;
+    // dip->minor = ip->minor;
+    // dip->nlink = ip->nlink;
+    dip->i_size = ip->size;
+    memmove(dip->i_block, ip->addrs, sizeof(ip->addrs));
     log_write(bp);
     brelse(bp);
 }

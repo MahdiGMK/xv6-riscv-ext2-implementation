@@ -140,6 +140,8 @@ UPROGS=\
 	$U/grind\
 	$U/wc\
 	$U/zombie\
+	$U/touch\
+	$U/append\
 
 # fs.img: mkfs/mkfs README $(UPROGS)
 # 	mkfs/mkfs fs.img README $(UPROGS)
