@@ -322,6 +322,24 @@ void iinit() {
 
 static struct inode *iget(uint dev, uint inum);
 
+void ifree(uint dev, uint inum) {
+    struct ext2_inode ind;
+    read_ext2_inode(dev, inum, &ind);
+    for (int i = 0; i < 12; i++)
+        if (ind.i_block[i])
+            bfree(dev, ind.i_block[i]);
+        else
+            break;
+    struct buf *bp = bread(dev, gd.bg_inode_bitmap);
+    inum--;
+    uint nmbyte = inum / 8;
+    uint byteP  = 1 << (inum % 8);
+    if (bp->data[nmbyte] & byteP)
+        bp->data[nmbyte] ^= byteP;
+    else
+        panic("freeing free block");
+    brelse(bp);
+}
 // Allocate an inode on device dev.
 // Mark it as allocated by  giving it type type.
 // Returns an unlocked but allocated and referenced inode,

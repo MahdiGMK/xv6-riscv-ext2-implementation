@@ -186,6 +186,7 @@ struct ext2_dirent {
     uint8  name_len; /* Name length */
     uint8  file_type;
 };
+void   ifree(uint dev, uint inum);
 uint64 sys_unlink(void) {
     struct inode      *ip, *dp;
     struct ext2_dirent de;
@@ -224,6 +225,7 @@ uint64 sys_unlink(void) {
         ptr += de.rec_len;
     }
     brelse(bp);
+    ifree(ROOTDEV, ip->inum);
 
     // // if (ip->nlink < 1)
     // //     panic("unlink: nlink < 1");
